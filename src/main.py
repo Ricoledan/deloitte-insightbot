@@ -20,7 +20,6 @@ loader = UnstructuredURLLoader(urls=urls)
 
 data = loader.load()
 
-
 vectorstore = Chroma.from_documents(
     data,
     embedding=OpenAIEmbeddings(),
@@ -29,11 +28,9 @@ vectorstore = Chroma.from_documents(
 retriever = vectorstore.as_retriever()
 
 system_prompt = (
-    "You are an assistant for question-answering tasks. "
-    "Use the following pieces of retrieved context to answer "
-    "the question. If you don't know the answer, say that you "
-    "don't know. Use three sentences maximum and keep the "
-    "answer concise."
+    "You are an assistant designed to provide insights based on Deloitte's weekly"
+    "economic updates.These updates offer a brief overview of the global political and economic situation, summarizing key"
+    "impacts and trends."
     "\n\n"
     "{context}"
 )
