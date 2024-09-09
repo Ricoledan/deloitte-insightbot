@@ -1,4 +1,4 @@
-# deloitte-insightbot
+# Deloitte-Insightbot
 
 ## Overview
 
