@@ -10,27 +10,21 @@ load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
+model = ChatOpenAI(model="gpt-3.5-turbo")
+
 urls = [
     "https://www2.deloitte.com/us/en/insights/economy/global-economic-outlook/weekly-update/weekly-update-2023-10.html?icid=archive_click"
 ]
-
-model = ChatOpenAI(model="gpt-3.5-turbo")
 
 loader = UnstructuredURLLoader(urls=urls)
 
 data = loader.load()
 
-vectorstore = Chroma.from_documents(
-    data,
-    embedding=OpenAIEmbeddings(),
-)
-
-retriever = vectorstore.as_retriever()
+# TODO: refactor to connect to chromadb and load the url info into the instance of Chroma
 
 system_prompt = (
-    "You are an assistant designed to provide insights based on Deloitte's weekly"
-    "economic updates.These updates offer a brief overview of the global political and economic situation, summarizing key"
-    "impacts and trends."
+    "You are an assistant designed to provide insights based on Deloitte's weekly economic updates."
+    "These updates offer a brief overview of the global political and economic situation, summarizing key impacts and trends."
     "\n\n"
     "{context}"
 )
