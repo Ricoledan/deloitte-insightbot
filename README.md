@@ -28,7 +28,18 @@ impacts and trends.
 
 ## Commands
 
-...
+Start the ChromaDB container 
+
+```bash
+docker compose up -d
+```
+
+Ping the ChromaDB container
+```bash
+curl localhost:8000/api/v1/heartbeat
+```
+
+Run the application
 
 ```bash
 python src/main.py
