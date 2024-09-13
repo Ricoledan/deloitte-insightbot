@@ -15,10 +15,14 @@ impacts and trends.
 
 ## Components
 
-1. **Data Ingestion**: A module to scrape and parse content from the specified URL.
-2. **Embeddings Model**: Utilizes an embedding model to convert content into vector representations.
-3. **VectorDB**: Stores the embeddings for efficient retrieval.
-4. **LLM**: Generates answers based on the retrieved passages.
+- **Data Ingestion**: A module to scrape and parse content from the specified URL.
+    - UnstructuredURLLoader class to fetch and parse the content from the URL.
+- **Embeddings Model**: Utilizes an embedding model to convert content into vector representations.
+    - OpenAIEmbeddings model with the model name text-embedding-3-large.
+- **VectorDB**: Stores the embeddings for efficient retrieval.
+    - Chroma class from langchain_chroma is used to interact with ChromaDB.
+- **LLM**: Generates answers based on the retrieved passages.
+    - ChatOpenAI class with the model name gpt-3.5-turbo.
 
 ## Usage
 
@@ -28,13 +32,14 @@ impacts and trends.
 
 ## Commands
 
-Start the ChromaDB container 
+Start the ChromaDB container
 
 ```bash
 docker compose up -d
 ```
 
-Ping the ChromaDB container
+Ping the ChromaDB container to check if it is running
+
 ```bash
 curl localhost:8000/api/v1/heartbeat
 ```
