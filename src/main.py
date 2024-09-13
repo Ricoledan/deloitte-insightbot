@@ -1,4 +1,3 @@
-import json
 import os
 import uuid
 
@@ -70,6 +69,7 @@ def query_vector_store(question, vector_store, model):
     system_prompt = (
         "You are an assistant designed to provide insights based on Deloitte's weekly economic updates."
         "These updates offer a brief overview of the global political and economic situation, summarizing key impacts and trends."
+        "Please use the information provided by the vector store to answer the following question:"
         "\n\n"
         "{context}"
     ).format(context=truncated_context)
@@ -79,9 +79,8 @@ def query_vector_store(question, vector_store, model):
 
 
 def generate_responses():
-    with open('reasoning/questions.json', 'r') as questions_file:
-        questions_data = json.load(questions_file)
-        questions_list = questions_data['questions']
+    with open('reasoning/questions.txt', 'r') as questions_file:
+        questions_list = [line.strip() for line in questions_file if line.strip()]
 
     with open('reasoning/response.txt', 'w') as response_file:
         for question in questions_list:
@@ -90,6 +89,5 @@ def generate_responses():
             response_file.write(f"Answer: {response}\n\n")
             print(f"Question: {question}")
             print(f"Answer: {response}\n")
-
 
 generate_responses()
