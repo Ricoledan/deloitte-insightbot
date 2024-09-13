@@ -90,4 +90,5 @@ def generate_responses():
             print(f"Question: {question}")
             print(f"Answer: {response}\n")
 
+
 generate_responses()
