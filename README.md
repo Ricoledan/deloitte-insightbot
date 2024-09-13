@@ -16,13 +16,13 @@ impacts and trends.
 ## Components
 
 - **Data Ingestion**: A module to scrape and parse content from the specified URL.
-    - UnstructuredURLLoader class to fetch and parse the content from the URL.
+    - `UnstructuredURLLoader` class to fetch and parse the content from the URL.
 - **Embeddings Model**: Utilizes an embedding model to convert content into vector representations.
-    - OpenAIEmbeddings model with the model name text-embedding-3-large.
+    - `OpenAIEmbeddings` model with the model name `text-embedding-3-large`.
 - **VectorDB**: Stores the embeddings for efficient retrieval.
-    - Chroma class from langchain_chroma is used to interact with ChromaDB.
+    - `Chroma` class from langchain_chroma is used to interact with ChromaDB.
 - **LLM**: Generates answers based on the retrieved passages.
-    - ChatOpenAI class with the model name gpt-3.5-turbo.
+    - ChatOpenAI class with the model name `gpt-3.5-turbo`.
 
 ## Usage
 
