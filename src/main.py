@@ -1,13 +1,15 @@
 import json
 import os
 import uuid
+
 import chromadb
-from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
+from chromadb.config import DEFAULT_DATABASE, DEFAULT_TENANT, Settings
 from dotenv import load_dotenv
 from langchain_chroma import Chroma
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_core.messages import HumanMessage
 from langchain_core.documents import Document
+from langchain_core.messages import HumanMessage
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import UnstructuredURLLoader
 
 load_dotenv()
@@ -42,7 +44,7 @@ client = chromadb.HttpClient(
 )
 
 
-def initialize_vector_store(client, embeddings, documents, uuids):
+def populate_vector_store(client, embeddings, documents, uuids):
     vector_store = Chroma(
         client=client,
         collection_name="economic_updates_collection",
@@ -52,22 +54,25 @@ def initialize_vector_store(client, embeddings, documents, uuids):
     return vector_store
 
 
-vector_store_from_client = initialize_vector_store(client, embeddings, documents, uuids)
+vector_store_from_client = populate_vector_store(client, embeddings, documents, uuids)
 
 
-def query_vector_store(query, vector_store, model):
-    if isinstance(query, list):
-        query = " ".join(query)  # Convert list to string if necessary
-    query_embedding = embeddings.embed_query(query)
-    results = vector_store.similarity_search(query_embedding, k=5)
+def query_vector_store(question, vector_store, model):
+    results = vector_store.similarity_search(question, k=5)
     context = "\n\n".join([doc.page_content for doc in results])
+
+    max_tokens = 16000
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=max_tokens, chunk_overlap=0)
+    context_chunks = text_splitter.split_text(context)
+
+    truncated_context = context_chunks[0]
 
     system_prompt = (
         "You are an assistant designed to provide insights based on Deloitte's weekly economic updates."
         "These updates offer a brief overview of the global political and economic situation, summarizing key impacts and trends."
         "\n\n"
         "{context}"
-    ).format(context=context)
+    ).format(context=truncated_context)
 
     response = model.invoke([HumanMessage(content=system_prompt)])
     return response.content
@@ -77,11 +82,14 @@ def generate_responses():
     with open('reasoning/questions.json', 'r') as questions_file:
         questions_data = json.load(questions_file)
         questions_list = questions_data['questions']
-        print(questions_list)
 
+    with open('reasoning/response.txt', 'w') as response_file:
         for question in questions_list:
             response = query_vector_store(question, vector_store_from_client, model)
-            print(f"Question: {question}\nResponse: {response}\n")
+            response_file.write(f"Question: {question}\n")
+            response_file.write(f"Answer: {response}\n\n")
+            print(f"Question: {question}")
+            print(f"Answer: {response}\n")
 
 
 generate_responses()
